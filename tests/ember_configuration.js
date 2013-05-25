@@ -56,7 +56,7 @@
 
   QUnit.testDone(function(context) {
     if (context.failed) {
-      var msg = "  Test Failed: " + context.name + assertionErrors.join("    ");
+      var msg = { name: context.name, errors: assertionErrors };
       testErrors.push(msg);
       assertionErrors = [];
     } else {
@@ -66,13 +66,14 @@
   QUnit.log(function(context) {
     if (context.result) { return; }
 
-    var msg = "\n    Assertion Failed:";
+    var msg = {}
     if (context.message) {
-      msg += " " + context.message;
+      msg.message = context.message
     }
 
     if (context.expected) {
-      msg += "\n      Expected: " + context.expected + ", Actual: " + context.actual;
+      msg.expected = context.expected;
+      msg.actual = context.actual;
     }
 
     assertionErrors.push(msg);
@@ -80,7 +81,7 @@
 
   QUnit.done(function(context) {
     if (moduleErrors.length){
-      context.errors = moduleErrors;
+      context[packageName] = moduleErrors;
     }
     global_test_results = context;
   });

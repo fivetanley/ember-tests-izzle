@@ -41,9 +41,46 @@
     runtime: 'ember-runtime.js'
   };
 })();
-QUnit.done = function(res) {
-    global_test_results = res;
-      // older IE versions don't like this test. lame.
-      //   // console.log(res);
-      //   };
-};
+(function(){
+  var moduleErrors = [];
+  var testErrors = [];
+  var assertionErrors = [];
+
+  QUnit.moduleDone(function(context) {
+    if (context.failed) {
+      var msg = { moduleName: context.name, testErrors: testErrors };
+      moduleErrors.push(msg);
+      testErrors = [];
+    }
+  });
+
+  QUnit.testDone(function(context) {
+    if (context.failed) {
+      var msg = "  Test Failed: " + context.name + assertionErrors.join("    ");
+      testErrors.push(msg);
+      assertionErrors = [];
+    } else {
+    }
+  });
+
+  QUnit.log(function(context) {
+    if (context.result) { return; }
+
+    var msg = "\n    Assertion Failed:";
+    if (context.message) {
+      msg += " " + context.message;
+    }
+
+    if (context.expected) {
+      msg += "\n      Expected: " + context.expected + ", Actual: " + context.actual;
+    }
+
+    assertionErrors.push(msg);
+  });
+
+  QUnit.done(function(context) {
+    context.moduleErrors = moduleErrors;
+    global_test_results = context;
+  });
+    
+})();

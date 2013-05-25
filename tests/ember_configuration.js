@@ -80,7 +80,7 @@
 
   QUnit.done(function(context) {
     if (moduleErrors.length){
-      context[packageName + '-errors'] = moduleErrors;
+      context.errors = moduleErrors;
     }
     global_test_results = context;
   });

@@ -79,7 +79,9 @@
   });
 
   QUnit.done(function(context) {
-    context[packageName + '-errors'] = moduleErrors;
+    if (moduleErrors.length){
+      context[packageName + '-errors'] = moduleErrors;
+    }
     global_test_results = context;
   });
     

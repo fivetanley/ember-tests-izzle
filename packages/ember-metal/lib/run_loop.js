@@ -53,15 +53,17 @@ var Backburner = requireModule('backburner').Backburner,
 */
 Ember.run = function(target, method) {
   var ret;
-  try {
-    ret = backburner.run.apply(backburner, arguments);
-  } catch (e) {
-    if (Ember.onerror) {
+
+  if (Ember.onerror) {
+    try {
+      ret = backburner.run.apply(backburner, arguments);
+    } catch (e) {
       Ember.onerror(e);
-    } else {
-      throw e;
     }
+  } else {
+    ret = backburner.run.apply(backburner, arguments);
   }
+
   return ret;
 };
 
@@ -263,7 +265,7 @@ Ember.run.sync = function() {
   @param {Object} [args*] Optional arguments to pass to the timeout.
   @param {Number} wait Number of milliseconds to wait.
   @return {String} a string you can use to cancel the timer in
-    {{#crossLink "Ember/run.cancel"}}{{/crossLink}} later.
+    `Ember.run.cancel` later.
 */
 Ember.run.later = function(target, method) {
   return backburner.later.apply(backburner, arguments);

@@ -55,6 +55,27 @@ Ember.onLoad('Ember.Handlebars', function(Handlebars) {
     attributeBindings: ['href', 'title'],
     classNameBindings: ['active', 'disabled'],
 
+    /**
+      By default the `{{linkTo}}` helper responds to the `click` event. You
+      can override this globally by setting this property to your custom
+      event name. 
+
+      This is particularly useful on mobile when one wants to avoid the 300ms
+      click delay using some sort of custom `tap` event.
+
+      @property eventName
+      @type String
+      @default click
+    */
+    eventName: 'click',
+
+    init: function() {
+      this._super();
+      // Map desired event name to invoke function
+      var eventName = get(this, 'eventName');
+      this.on(eventName, this, this._invoke);
+    },
+
     // Even though this isn't a virtual view, we want to treat it as if it is
     // so that you can access the parent with {{view.prop}}
     concreteView: Ember.computed(function() {
@@ -81,7 +102,15 @@ Ember.onLoad('Ember.Handlebars', function(Handlebars) {
       return this.get('controller').container.lookup('router:main');
     }),
 
-    click: function(event) {
+    /**
+      @private
+
+      Event handler that invokes the link, activating the associated route.
+
+      @method _invoke
+      @param {Event} event
+    */
+    _invoke: function(event) {
       if (!isSimpleClick(event)) { return true; }
 
       event.preventDefault();
@@ -267,6 +296,15 @@ Ember.onLoad('Ember.Handlebars', function(Handlebars) {
       activeClass: "is-active",
       tagName: 'li'
     })
+    ```
+
+    It is also possible to override the default event in
+    this manner:
+
+    ``` javascript
+    Ember.LinkView.reopen({
+      eventName: 'customEventName'
+    });
     ```
 
     @method linkTo

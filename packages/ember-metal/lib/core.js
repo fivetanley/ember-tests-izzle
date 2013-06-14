@@ -22,7 +22,7 @@
 
   @class Ember
   @static
-  @version 1.0.0-rc.3
+  @version 1.0.0-rc.5
 */
 
 if ('undefined' === typeof Ember) {
@@ -49,10 +49,10 @@ Ember.toString = function() { return "Ember"; };
 /**
   @property VERSION
   @type String
-  @default '1.0.0-rc.3'
+  @default '1.0.0-rc.5'
   @final
 */
-Ember.VERSION = '1.0.0-rc.3';
+Ember.VERSION = '1.0.0-rc.5';
 
 /**
   Standard environmental variables. You can define these in a global `ENV`
@@ -167,6 +167,19 @@ function consoleMethod(name) {
   }
 }
 
+function assertPolyfill(test, message) {
+  if (!test) {
+    try {
+      // attempt to preserve the stack
+      throw new Error("assertion failed: " + message);
+    } catch(error) {
+      setTimeout(function(){
+        throw error;
+      }, 0);
+    }
+  }
+}
+
 /**
   Inside Ember-Metal, simply uses the methods from `imports.console`.
   Override this to provide more robust logging functionality.
@@ -179,7 +192,8 @@ Ember.Logger = {
   warn:  consoleMethod('warn')  || Ember.K,
   error: consoleMethod('error') || Ember.K,
   info:  consoleMethod('info')  || Ember.K,
-  debug: consoleMethod('debug') || consoleMethod('info') || Ember.K
+  debug: consoleMethod('debug') || consoleMethod('info') || Ember.K,
+  assert: consoleMethod('assert') || assertPolyfill
 };
 
 

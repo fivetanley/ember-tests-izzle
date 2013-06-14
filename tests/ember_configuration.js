@@ -40,6 +40,8 @@
     prod:    'ember.prod.js',
     runtime: 'ember-runtime.js'
   };
+
+
 })();
 (function(){
   var moduleErrors = [];
